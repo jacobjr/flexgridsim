@@ -41,36 +41,12 @@ public class ShortestPathRSA implements RSA {
 
 	@Override
 	public void flowArrival(Flow flow) {
-//		int[] nodes;
-//		int[] links;
-//		int firstSlot;
-//		int lastSlot;
 		long id;
 		LightPath[] lps = new LightPath[1];
 		int demandInSlots = (int) Math.ceil(flow.getRate() / (double) pt.getSlotCapacity());
 		// Shortest-Path routing
 		lps[0] = MSP(graph, flow.getSource(),  flow.getDestination(),
 				demandInSlots);
-		// If no possible path found, block the call
-//		if (nodes == null) {
-//			cp.blockFlow(flow.getID());
-//			return;
-//		} else if (nodes.length == 0) {
-//			cp.blockFlow(flow.getID());
-//			return;
-//		}
-//		// Create the links vector
-//		links = new int[nodes.length - 1];
-//		for (int j = 0; j < nodes.length - 1; j++) {
-//			links[j] = pt.getLink(nodes[j], nodes[j + 1]).getID();
-//		}
-//
-//		// First-Fit slot assignment
-//		for (int i = 0; i < pt.getNumSlots()-demandInSlots; i++) {
-//			// Create the slots arrays
-//			firstSlot = i;
-//			lastSlot = i + demandInSlots - 1;
-			// If can establish the lightpath, accept the call
 		if (lps[0] != null){
 			id = vt.createLightpath(lps[0].getLinks(), lps[0].getFirstSlot(), lps[0].getLastSlot());
 			if (id >= 0) {
@@ -82,10 +58,6 @@ public class ShortestPathRSA implements RSA {
 		} else {
 			cp.blockFlow(flow.getID());
 		}
-//		}
-			
-		// Block the call
-		
 	}
 
 	@Override
