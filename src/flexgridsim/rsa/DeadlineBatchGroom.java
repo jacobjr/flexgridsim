@@ -103,7 +103,7 @@ public class DeadlineBatchGroom implements	DeadlinedRSA {
 	 */
 	public void addNewFlowToCp(Flow flow){
 		((ControlPlane)this.cp).newEvent(new FlowArrivalEvent(flow.getTime(), flow));
-		((ControlPlane)this.cp).newEvent(new FlowDepartureEvent(flow.getDeadline(), flow.getID(), flow));
+		((ControlPlane)this.cp).newEvent(new FlowDepartureEvent(flow.getDuration(), flow.getID(), flow));
 	}
 
 

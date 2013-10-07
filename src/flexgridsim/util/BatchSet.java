@@ -48,35 +48,7 @@ public class BatchSet extends ArrayList<Batch> {
 			currentBatch = newBatch;
 			this.add(newBatch);
 		}
-//		if (shortestDeadlineBatch == null) {
-//			shortestDeadlineBatch = currentBatch;
-//		} else if (flow.getDeadline() < shortestDeadlineBatch
-//				.getShortestDeadline()) {
-//			if (currentBatch == null) {
-//				throw new RuntimeException();
-//			}
-//			shortestDeadlineBatch = currentBatch;
-//		}
 		return currentBatch;
 	}
-
-//	/**
-//	 * Gets the shortest deadline batch.
-//	 * 
-//	 * @return the shortest deadline batch
-//	 */
-//	public Batch getShortestDeadlineBatch() {
-//		return shortestDeadlineBatch;
-//	}
-
-//	/**
-//	 * Gets the shortest deadline.
-//	 * 
-//	 * @return the shortest deadline
-//	 */
-//	public double getShortestDeadline() {
-//		return shortestDeadlineBatch.getShortestDeadline();
-//	}
-//	
 
 }
