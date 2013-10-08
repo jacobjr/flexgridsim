@@ -23,7 +23,6 @@ public class ModifiedShortestPath implements RSA {
 	protected VirtualTopology vt;
 	protected ControlPlaneForRSA cp;
 	protected WeightedGraph graph;
-	private int numFlowsUsed;
 
 	@Override
 	public void simulationInterface(Element xml, PhysicalTopology pt, VirtualTopology vt,
@@ -42,8 +41,6 @@ public class ModifiedShortestPath implements RSA {
 
 	@Override
 	public void flowArrival(Flow flow) {
-		numFlowsUsed++;
-		System.out.println("FlowsUsed=" + numFlowsUsed);
 		int[] nodes;
 		int[] links;
 		int firstSlot;

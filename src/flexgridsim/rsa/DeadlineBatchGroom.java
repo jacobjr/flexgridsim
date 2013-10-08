@@ -20,8 +20,6 @@ public class DeadlineBatchGroom implements	DeadlinedRSA {
 	protected VirtualTopology vt;
 	protected ControlPlaneForRSA cp;
 	protected BatchSet batches;
-	protected int numFlowsUsed;
-	protected int numFlowsNotUsed;
 	protected RSA rsa;
 	
 	/**
@@ -30,8 +28,6 @@ public class DeadlineBatchGroom implements	DeadlinedRSA {
 	public DeadlineBatchGroom() {
 		super();
 		this.batches = new BatchSet();
-		this.numFlowsUsed = 0;
-		this.numFlowsNotUsed = 0;
 	}
 
 	@Override
@@ -69,11 +65,7 @@ public class DeadlineBatchGroom implements	DeadlinedRSA {
 
 	@Override
 	public void deadlineArrival(Batch batch, double time) {
-		System.out.println("Deadline arrival "+ batch.getSource()+"->"+batch.getDestination());
-		this.numFlowsUsed += batch.size();
-		System.out.println("Flows used "+ this.numFlowsUsed);
 		Flow groomedFLow = batch.convertBatchToSingleFlow(time);
-		this.numFlowsUsed += batch.size();
 		this.addNewFlowToCp(groomedFLow);
 		this.batches.remove(batch);
 	}
@@ -102,8 +94,8 @@ public class DeadlineBatchGroom implements	DeadlinedRSA {
 	 * @param flow the flow
 	 */
 	public void addNewFlowToCp(Flow flow){
-		((ControlPlane)this.cp).newEvent(new FlowArrivalEvent(flow.getTime(), flow));
-		((ControlPlane)this.cp).newEvent(new FlowDepartureEvent(flow.getDuration(), flow.getID(), flow));
+		((ControlPlane)this.cp).addFlowArrivalEvent(new FlowArrivalEvent(flow.getTime(), flow));
+		((ControlPlane)this.cp).addFlowDepartureEvent(new FlowDepartureEvent(flow.getTime()+flow.getDuration(), flow.getID(), flow));
 	}
 
 

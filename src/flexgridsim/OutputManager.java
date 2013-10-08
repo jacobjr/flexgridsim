@@ -26,8 +26,7 @@ public class OutputManager {
 		for (int i = 0; i < numberOfGraphs; i++) {
 			graphs[i] = new Graph(
 					((Element) graphlist.item(i)).getAttribute("name"),
-					((Element) graphlist.item(i)).getAttribute("dots-file"),
-					2);
+					((Element) graphlist.item(i)).getAttribute("dots-file"),2);
 		}
 	}
 	
@@ -36,11 +35,7 @@ public class OutputManager {
 	 */
 	public void writeAllToFiles(){
 		for (Graph graph : graphs) {
-			if (graph.getName().equalsIgnoreCase("jfi")) {
-				graph.writeDotsToFile();
-			} else {
-				graph.writeDotsToFile();
-			}
+			graph.writeDotsToFile();
 		}
 	}
 	

@@ -127,7 +127,7 @@ public class Batch extends ArrayList<Flow>{
 		}
 //		System.out.println();
 		flowId++;
-		Flow flow = new Flow(Long.MAX_VALUE - flowId, this.getSource(), this.getDestination(), shortestDeadlineEvent.getTime(), rateSum, maxDuration, maxCos, 0);
+		Flow flow = new Flow(Long.MAX_VALUE - flowId, this.getSource(), this.getDestination(), time, rateSum, maxDuration, maxCos, 0);
 		flow.setBatch(true);
 		flow.setNumberOfFlowsGroomed(this.size());
 		return flow;

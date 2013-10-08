@@ -90,5 +90,6 @@
     	<graph name="hops" dots-file="deadline-graph-hops.dat"/>
     	<graph name="bp" dots-file="deadline-graph-bp.dat"/>
     	<graph name="jfi" dots-file="deadline-graph-jfi.dat"/>
+    	<graph name="transponders" dots-file="deadline-graph-transponders.dat"/>
     </graphs>
 </flexgridsim>

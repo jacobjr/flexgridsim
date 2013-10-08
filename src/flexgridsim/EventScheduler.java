@@ -121,4 +121,22 @@ public class EventScheduler {
 	public void removeDeadlineEvent(DeadlineEvent event) {
 		this.eventQueue.remove(event);
 	} 
+	
+	/**
+	 * Adds the flow arrival event.
+	 *
+	 * @param event the event
+	 */
+	public void addFlowArrivalEvent(FlowArrivalEvent event) {
+		this.eventQueue.add(event);
+	} 
+	
+	/**
+	 * Adds the flow departure.
+	 *
+	 * @param event the event
+	 */
+	public void addFlowDeparture(FlowDepartureEvent event) {
+		this.eventQueue.add(event);
+	} 
 }

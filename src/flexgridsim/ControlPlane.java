@@ -360,4 +360,22 @@ public class ControlPlane implements ControlPlaneForRSA {
     public void removeDeadlineEvent(Batch batch){
     	eventScheduler.removeDeadlineEvent(batch.getShortestDeadlineEvent());
     }
+    
+    /**
+     * Adds the flow arrival event.
+     *
+     * @param event the event
+     */
+    public void addFlowArrivalEvent(FlowArrivalEvent event){
+    	eventScheduler.addFlowArrivalEvent(event);
+    }
+    
+    /**
+     * Adds the flow departure event.
+     *
+     * @param event the event
+     */
+    public void addFlowDepartureEvent(FlowDepartureEvent event){
+    	eventScheduler.addFlowDeparture(event);
+    }
 }

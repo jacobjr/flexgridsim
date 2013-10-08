@@ -157,6 +157,7 @@ public class TrafficGenerator {
 	            holdingTime = dist4.nextExponential(callsTypesInfo[type].getHoldingTime());
 		    }
             Flow newFLow = new Flow(id, src, dst, time, callsTypesInfo[type].getRate(), holdingTime, callsTypesInfo[type].getCOS(), time+(holdingTime*0.5));
+            newFLow.setBatch(false);
             Event event;
             event = new FlowArrivalEvent(time, newFLow);
             time += dist3.nextExponential(meanArrivalTime);

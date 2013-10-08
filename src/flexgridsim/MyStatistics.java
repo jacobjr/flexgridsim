@@ -195,7 +195,10 @@ public class MyStatistics {
 			}
 		}
     	meanTransponders = meanTransponders / size;
-    	plotter.addDotToGraph("transponders", load, meanTransponders);
+    	if (meanTransponders!= Double.NaN){
+    		plotter.addDotToGraph("transponders", load, meanTransponders);
+    		System.out.println(meanTransponders);
+    	}
     	//BFR
     	double BFR = 0;
     	for (int i = 0; i < pt.getNumLinks(); i++) {

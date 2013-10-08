@@ -80,7 +80,8 @@ public class DataSet {
 		double[] sum = new double[dimension];
 		for (double[] dot: dots){
 			for (int i=0; i<dimension; i++){
-				sum[i] += dot[i];
+				if (dot[i]!=Double.NaN)
+					sum[i] += dot[i];
 			}
 		}
 		return sum;
@@ -95,7 +96,8 @@ public class DataSet {
 		double[] sum2 = new double[dimension];
 		for (double[] dot: dots){
 			for (int i=0; i<dimension; i++){
-				sum2[i] += dot[i]*dot[i];
+				if (dot[i]!=Double.NaN)
+					sum2[i] += dot[i]*dot[i];
 			}
 		}
 		return sum2;

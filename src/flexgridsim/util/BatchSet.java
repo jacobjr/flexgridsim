@@ -13,14 +13,11 @@ public class BatchSet extends ArrayList<Batch> {
 	 * 
 	 */
 	private static final long serialVersionUID = 6955514003876428494L;
-
-//	private Batch shortestDeadlineBatch;
 	
 	/**
 	 * Instantiates a new batch set.
 	 */
 	public BatchSet() {
-//		shortestDeadlineBatch = null;
 	}
 
 	/**
