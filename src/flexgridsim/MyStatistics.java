@@ -49,13 +49,6 @@ public class MyStatistics {
 
         requiredBandwidth = 0;
         blockedBandwidth = 0;
-      
-//        numfails = 0;
-//        flowfails = 0;
-//        lpsfails = 0;
-//        trafficfails = 0;
-//
-//        execTime = 0;
     }
     
     /**
@@ -185,19 +178,16 @@ public class MyStatistics {
     	fragmentationMean = fragmentationMean / pt.getNumLinks();
     	plotter.addDotToGraph("fragmentation", load, fragmentationMean);
     	double meanTransponders = 0;
-    	int size = 0;
     	for (int i = 0; i < numberOfUsedTransponders.length; i++) {
 			for (int j = 0; j < numberOfUsedTransponders[i].length; j++) {
 				if (numberOfUsedTransponders[i][j]>0){
 					meanTransponders += numberOfUsedTransponders[i][j];
-					size++;
 				}
 			}
 		}
-    	meanTransponders = meanTransponders / size;
-    	if (meanTransponders!= Double.NaN){
+//    	meanTransponders = meanTransponders / size;
+    	if (Double.compare(meanTransponders, Double.NaN)!=0){
     		plotter.addDotToGraph("transponders", load, meanTransponders);
-    		System.out.println(meanTransponders);
     	}
     	//BFR
     	double BFR = 0;

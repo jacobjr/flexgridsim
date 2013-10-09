@@ -5,10 +5,19 @@
 
     <trace file="trace.tr"/>
 
-    <traffic calls="100000" load="215" max-rate="100">
-        <calls holding-time="0.5" rate="50" cos="1" weight="1"/>
-        <calls holding-time="0.5" rate="125" cos="1" weight="1"/>
-        <calls holding-time="0.5" rate="300" cos="1" weight="1"/>
+    <traffic calls="10000" load="215" max-rate="100">
+		<calls holding-time="1" rate="3" cos="1" weight="50"/>
+        <calls holding-time="1" rate="12" cos="1" weight="25"/>
+        <calls holding-time="1" rate="24" cos="1" weight="15"/>
+        <calls holding-time="1" rate="48" cos="1" weight="7"/>
+        <calls holding-time="1" rate="96" cos="1" weight="2"/>
+        <calls holding-time="1" rate="192" cos="1" weight="1"/>
+     	<fileSize minRate="3" minSize="0.1" maxSize="2.5"/>
+    	<fileSize minRate="12" minSize="0.5" maxSize="5.0"/>
+    	<fileSize minRate="24" minSize="1.0" maxSize="10.0"/>
+    	<fileSize minRate="48" minSize="1.0" maxSize="50.0"/>
+    	<fileSize minRate="96" minSize="1.0" maxSize="50.0"/>
+    	<fileSize minRate="192" minSize="1.0" maxSize="50.0"/>
     </traffic>
 
     <virtual-topology  name="NSFNet">
@@ -80,5 +89,8 @@
     	<graph name="mbbr" dots-file="sg-graph-mbbr.dat"/>
     	<graph name="fragmentation" dots-file="sg-graph-fragmentation.dat"/>
     	<graph name="hops" dots-file="sg-graph-hops.dat"/>
+    	<graph name="bp" dots-file="sg-graph-bp.dat"/>
+    	<graph name="jfi" dots-file="sg-graph-jfi.dat"/>
+    	<graph name="transponders" dots-file="sg-graph-transponders.dat"/>
     </graphs>
 </flexgridsim>
