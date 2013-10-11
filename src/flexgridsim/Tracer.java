@@ -31,7 +31,6 @@ public class Tracer {
      * A private Constructor prevents any other class from instantiating.
      */
     private Tracer() {
-    	
     	writeTrace = true;
     }
     

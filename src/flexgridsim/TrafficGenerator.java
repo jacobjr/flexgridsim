@@ -12,7 +12,7 @@ import flexgridsim.util.Distribution;
  * Generates the network's traffic based on the information passed through the
  * command line arguments and the XML simulation file.
  * 
- * @author andred
+ * @author pedrom, andred
  */
 public class TrafficGenerator {
 
@@ -29,6 +29,7 @@ public class TrafficGenerator {
     private double[] minSize;
     private double[] maxSize;
     private NodeList fileSizes;
+    private double deadlineRate;
 
     /**
      * Creates a new TrafficGenerator object.
@@ -43,6 +44,7 @@ public class TrafficGenerator {
         double holdingTime;
         this.xml = xml;
         calls = Integer.parseInt(xml.getAttribute("calls"));
+        deadlineRate = Double.parseDouble(xml.getAttribute("deadline-rate"));
         load = forcedLoad;
         if (load == 0) {
             load = Double.parseDouble(xml.getAttribute("load"));
@@ -156,7 +158,8 @@ public class TrafficGenerator {
 		    } else {
 	            holdingTime = dist4.nextExponential(callsTypesInfo[type].getHoldingTime());
 		    }
-            Flow newFLow = new Flow(id, src, dst, time, callsTypesInfo[type].getRate(), holdingTime, callsTypesInfo[type].getCOS(), time+(holdingTime*0.1));
+			
+            Flow newFLow = new Flow(id, src, dst, time, callsTypesInfo[type].getRate(), holdingTime, callsTypesInfo[type].getCOS(), time+(holdingTime*deadlineRate));
             newFLow.setBatch(false);
             Event event;
             event = new FlowArrivalEvent(time, newFLow);

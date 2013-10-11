@@ -52,7 +52,6 @@ public class DeadlineBatchGroom implements	DeadlinedRSA {
 		if (flow.isBatch()){
 			this.rsa.flowArrival(flow);
 		} else {
-//			System.out.println("Flow Batched");
 			Batch updatedBatch = this.batches.addFLow(flow);
 			this.updateDeadlineEvent(updatedBatch);
 		}
@@ -97,7 +96,4 @@ public class DeadlineBatchGroom implements	DeadlinedRSA {
 		((ControlPlane)this.cp).addFlowArrivalEvent(new FlowArrivalEvent(flow.getTime(), flow));
 		((ControlPlane)this.cp).addFlowDepartureEvent(new FlowDepartureEvent(flow.getTime()+flow.getDuration(), flow.getID(), flow));
 	}
-
-
-
 }
