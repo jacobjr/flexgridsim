@@ -52,10 +52,26 @@ public class SpectrumGraphRSA implements RSA {
 		// Shortest-Path routing
 		LightPath shortestPath = getShortestPath(this.spectrumGraph,
 				flow.getSource(), flow.getDestination(), demandInSlots);
-
+		System.out.print("Sizes");
+		for (Integer size : flow.getSizes()) {
+			System.out.print(size+",");
+		}
+		System.out.println();
+		int rate = flow.getRate();
+		if (flow.isBatch()){
+			rate -= flow.getSizes().get(0);
+			flow.getSizes().remove(0);
+			while (rate > 0 && shortestPath == null){
+				shortestPath = getShortestPath(this.spectrumGraph, flow.getSource(), flow.getDestination(), (int) Math.ceil(rate/ (double) pt.getSlotCapacity()));
+				rate -= flow.getSizes().get(0);
+				flow.getSizes().remove(0);
+			}
+		}
 		if (shortestPath == null) {
 			cp.blockFlow(flow.getID());
 			return;
+		} else {
+			flow.setNumberOfFLowsAccepted(rate);
 		}
 		// Create the links vector
 		long id = vt.createLightpath(shortestPath.getLinks(),

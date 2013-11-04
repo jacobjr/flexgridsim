@@ -108,13 +108,15 @@ public class Batch extends ArrayList<Flow>{
 	 * @return the flow
 	 */
 	public Flow convertBatchToSingleFlow(double time){
+		ArrayList<Integer> sizes = new ArrayList<Integer>();
 		int rateSum = 0;
 		int maxCos = 0;
 		double maxDuration = 0;
 //		System.out.print("Rates:");
 		for (Flow flow : this) {
-			//rateSum += flow.getRate();
-			rateSum += (flow.getDuration() / (flow.getTime() + flow.getDuration() - time)) * flow.getRate();
+			rateSum += flow.getRate();
+			sizes.add(flow.getRate());
+			//rateSum += (flow.getDuration() / (flow.getTime() + flow.getDuration() - time)) * flow.getRate();
 			
 //			System.out.print(flow.getRate()+"-");
 //			System.out.println("Rate="+flow.getRate() +" rateSum=" + (flow.getDuration() / (flow.getTime() + flow.getDuration() - time)) * flow.getRate());
@@ -125,10 +127,12 @@ public class Batch extends ArrayList<Flow>{
 				maxDuration = flow.getDuration();
 			}
 		}
+		
 //		System.out.println();
 		flowId++;
 		Flow flow = new Flow(Long.MAX_VALUE - flowId, this.getSource(), this.getDestination(), time, rateSum, maxDuration, maxCos, 0);
 		flow.setBatch(true);
+		flow.setSizes(sizes);
 		flow.setNumberOfFlowsGroomed(this.size());
 		return flow;
 	}

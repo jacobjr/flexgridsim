@@ -206,6 +206,7 @@ public class MyStatistics {
 		}
     	BFR = BFR/pt.getNumLinks();
     	plotter.addDotToGraph("bfr", load, BFR);
+    	
 	}
 	
     /**
@@ -217,8 +218,8 @@ public class MyStatistics {
     public void acceptFlow(Flow flow, LightPath[] lightpaths) {
         if (this.numberArrivals > this.minNumberArrivals){
         	if (flow.isBatch()){
-        		this.accepted += flow.getNumberOfFlowsGroomed();
-        		
+        		this.accepted += flow.getNumberOfFLowsAccepted();
+        		this.blocked += flow.getNumberOfFlowsGroomed() - flow.getNumberOfFLowsAccepted();
         	} else {
 	            this.accepted++;
         	}

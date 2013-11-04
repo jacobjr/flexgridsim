@@ -4,6 +4,8 @@
  */
 package flexgridsim;
 
+import java.util.ArrayList;
+
 /**
  * The Flow class defines an object that can be thought of as a flow
  * of data, going from a source node to a destination node. 
@@ -26,6 +28,9 @@ public class Flow {
     private boolean isBatch;
     private double time;
     private int numberOfFlowsGroomed;
+    private int numberOfFLowsAccepted;
+
+	private ArrayList<Integer> sizes;
 
 	/**
 	 * Creates a new Flow object.
@@ -58,6 +63,24 @@ public class Flow {
     }
     
     /**
+     * Gets the sizes.
+     *
+     * @return the sizes
+     */
+    public ArrayList<Integer> getSizes() {
+		return sizes;
+	}
+
+	/**
+	 * Sets the sizes.
+	 *
+	 * @param sizes the new sizes
+	 */
+	public void setSizes(ArrayList<Integer> sizes) {
+		this.sizes = sizes;
+	}
+
+	/**
      * Gets the time.
      *
      * @return the time
@@ -292,5 +315,22 @@ public class Flow {
 		this.accepeted = accepeted;
 	}
     
+    /**
+     * Gets the number of f lows accepted.
+     *
+     * @return the number of f lows accepted
+     */
+    public int getNumberOfFLowsAccepted() {
+		return numberOfFLowsAccepted;
+	}
+
+	/**
+	 * Sets the number of f lows accepted.
+	 *
+	 * @param numberOfFLowsAccepted the new number of f lows accepted
+	 */
+	public void setNumberOfFLowsAccepted(int numberOfFLowsAccepted) {
+		this.numberOfFLowsAccepted = numberOfFLowsAccepted;
+	}
     
 }
