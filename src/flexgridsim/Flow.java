@@ -29,6 +29,7 @@ public class Flow {
     private double time;
     private int numberOfFlowsGroomed;
     private int numberOfFLowsAccepted;
+    private int numberOfFlowsBlocked;
 
 	private ArrayList<Integer> sizes;
 
@@ -59,6 +60,7 @@ public class Flow {
             this.isBatch = false;
             this.time = time;
             this.numberOfFlowsGroomed = 0;
+            this.numberOfFLowsAccepted = 0;
         }
     }
     
@@ -331,6 +333,24 @@ public class Flow {
 	 */
 	public void setNumberOfFLowsAccepted(int numberOfFLowsAccepted) {
 		this.numberOfFLowsAccepted = numberOfFLowsAccepted;
+	}
+
+	/**
+	 * Gets the number of flows blocked.
+	 *
+	 * @return the number of flows blocked
+	 */
+	public int getNumberOfFlowsBlocked() {
+		return numberOfFlowsBlocked;
+	}
+
+	/**
+	 * Sets the number of flows blocked.
+	 *
+	 * @param numberOfFlowsBlocked the new number of flows blocked
+	 */
+	public void setNumberOfFlowsBlocked(int numberOfFlowsBlocked) {
+		this.numberOfFlowsBlocked = numberOfFlowsBlocked;
 	}
     
 }

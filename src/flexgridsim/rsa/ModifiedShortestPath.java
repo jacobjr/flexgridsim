@@ -51,13 +51,25 @@ public class ModifiedShortestPath implements RSA {
 		// Shortest-Path routing
 		nodes = getShortestPath(graph, flow.getSource(), flow.getDestination(),
 				demandInSlots);
+		int rate = flow.getRate();
+		if (flow.isBatch() && nodes.length == 0){
+			rate -= flow.getSizes().get(0);
+			flow.getSizes().remove(0);
+			while (rate > 0 && nodes.length == 0){
+				nodes = getShortestPath(graph, flow.getSource(), flow.getDestination(), (int) Math.ceil(rate/ (double) pt.getSlotCapacity()));
+				rate -= flow.getSizes().get(0);
+				flow.getSizes().remove(0);
+			}
+		}
 		// If no possible path found, block the call
-		if (nodes == null) {
+		if (nodes.length == 0) {
+			flow.setNumberOfFLowsAccepted(0);
+			flow.setNumberOfFlowsBlocked(flow.getNumberOfFlowsGroomed());
 			cp.blockFlow(flow.getID());
 			return;
-		} else if (nodes.length == 0) {
-			cp.blockFlow(flow.getID());
-			return;
+		} else if (flow.isBatch()){
+			flow.setNumberOfFLowsAccepted(rate);
+			flow.setNumberOfFlowsBlocked(flow.getNumberOfFlowsGroomed()-rate);
 		}
 		// Create the links vector
 		links = new int[nodes.length - 1];

@@ -1,13 +1,8 @@
-/*
- * 
- */
 package flexgridsim.rsa;
-
 
 import java.util.ArrayList;
 
 import org.w3c.dom.Element;
-
 
 import flexgridsim.FlexGridLink;
 import flexgridsim.Flow;
@@ -18,14 +13,11 @@ import flexgridsim.VirtualTopology;
 import flexgridsim.util.ConstantsRSA;
 import flexgridsim.util.MultiGraph;
 import flexgridsim.util.WeightedGraph;
+
 /**
- * A weighted graph associates a label (weight) with every edge in the graph. If
- * a pair of nodes has a array of weights equal to zero, it means the edge between them
- * doesn't exist.
- * 
- * @author pedrom
+ * The Class DeadlineGroomRSA.
  */
-public class SpectrumGraphRSA implements RSA {
+public class DeadlineGroomRSA implements RSA {
 	protected PhysicalTopology pt;
 	protected VirtualTopology vt;
 	protected ControlPlaneForRSA cp;

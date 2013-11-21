@@ -5,7 +5,7 @@
 
     <trace file="trace.tr"/>
 
-    <traffic calls="1000" load="215" max-rate="192" deadline-rate="0.75">
+    <traffic calls="10000" load="215" max-rate="192" deadline-rate="0.75">
    	<calls holding-time="1" rate="3" cos="1" weight="50"/>
         <calls holding-time="1" rate="12" cos="1" weight="25"/>
         <calls holding-time="1" rate="24" cos="1" weight="15"/>
@@ -23,7 +23,7 @@
     <virtual-topology  name="USA">
     </virtual-topology>
     
-    <physical-topology name="USA" slots="400" slotsBandwidth="12.5">
+    <physical-topology name="USA" slots="240" slotsBandwidth="12.5">
         <nodes>
             <node id="0"/>
             <node id="1"/>

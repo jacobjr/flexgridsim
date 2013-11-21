@@ -218,8 +218,9 @@ public class MyStatistics {
     public void acceptFlow(Flow flow, LightPath[] lightpaths) {
         if (this.numberArrivals > this.minNumberArrivals){
         	if (flow.isBatch()){
-        		this.accepted += flow.getNumberOfFLowsAccepted();
-        		this.blocked += flow.getNumberOfFlowsGroomed() - flow.getNumberOfFLowsAccepted();
+        		this.accepted += flow.getNumberOfFlowsGroomed();
+//        		this.accepted += flow.getNumberOfFLowsAccepted();
+//        		this.blocked += flow.getNumberOfFlowsGroomed() - flow.getNumberOfFLowsAccepted();
         	} else {
 	            this.accepted++;
         	}
@@ -237,7 +238,9 @@ public class MyStatistics {
     public void blockFlow(Flow flow) {
         if (this.numberArrivals > this.minNumberArrivals) {
         	if (flow.isBatch()){
-        		this.blocked += flow.getNumberOfFlowsGroomed();
+//        		this.blocked += flow.getNumberOfFlowsGroomed();
+        		this.blocked += flow.getNumberOfFlowsBlocked();
+        		this.accepted += flow.getNumberOfFLowsAccepted();
         	} else {
 	            this.blocked++;
         	}
