@@ -1,38 +1,43 @@
-/*
- * 
- */
 package flexgridsim.rsa;
-
 
 import java.util.ArrayList;
 
 import org.w3c.dom.Element;
 
-
+import flexgridsim.ControlPlane;
 import flexgridsim.FlexGridLink;
 import flexgridsim.Flow;
+import flexgridsim.FlowArrivalEvent;
+import flexgridsim.FlowDepartureEvent;
 import flexgridsim.LightPath;
 import flexgridsim.PhysicalTopology;
 import flexgridsim.TrafficGenerator;
 import flexgridsim.VirtualTopology;
+import flexgridsim.util.Batch;
+import flexgridsim.util.BatchSet;
 import flexgridsim.util.ConstantsRSA;
 import flexgridsim.util.MultiGraph;
 import flexgridsim.util.WeightedGraph;
+
 /**
- * A weighted graph associates a label (weight) with every edge in the graph. If
- * a pair of nodes has a array of weights equal to zero, it means the edge between them
- * doesn't exist.
- * 
- * @author pedrom
+ * The Class BatchGroomRSA.
  */
-public class SpectrumGraphRSA implements RSA {
+public class BatchGroomRSA implements DeadlinedRSA {
 	protected PhysicalTopology pt;
 	protected VirtualTopology vt;
 	protected ControlPlaneForRSA cp;
 	protected WeightedGraph graph;
 	protected MultiGraph spectrumGraph;
-	protected Element rsaXml;
+	protected BatchSet batches;
 
+	/**
+	 * Instantiates a new batch groom rsa.
+	 */
+	public BatchGroomRSA() {
+		super();
+		this.batches = new BatchSet();
+	}
+	
 	@Override
 	public void simulationInterface(Element xml, PhysicalTopology pt, VirtualTopology vt,
 			ControlPlaneForRSA cp, TrafficGenerator traffic) {
@@ -41,68 +46,17 @@ public class SpectrumGraphRSA implements RSA {
 		this.cp = cp;
 		this.graph = pt.getWeightedGraph();
 		this.spectrumGraph = new MultiGraph(this.graph, pt, traffic);
-		this.rsaXml = xml;
 	}
 
 	@Override
 	public void flowArrival(Flow flow) {
-		LightPath[] lps = new LightPath[1];
-		int demandInSlots = (int) Math.ceil(flow.getRate()
-				/ (double) pt.getSlotCapacity());
-		// Shortest-Path routing
-		LightPath shortestPath = getShortestPath(this.spectrumGraph,
-				flow.getSource(), flow.getDestination(), demandInSlots);
-//		System.out.print("Sizes");
-//		for (Integer size : flow.getSizes()) {
-//			System.out.print(size+",");
-//		}
-//		System.out.println();
-		int rate = flow.getRate();
-		if (flow.isBatch() && shortestPath == null){
-			rate -= flow.getSizes().get(0);
-			flow.getSizes().remove(0);
-			while (rate > 0 && shortestPath == null){
-				shortestPath = getShortestPath(this.spectrumGraph, flow.getSource(), flow.getDestination(), (int) Math.ceil(rate/ (double) pt.getSlotCapacity()));
-				rate -= flow.getSizes().get(0);
-				flow.getSizes().remove(0);
-			}
-		}
-		if (shortestPath == null) {
-			flow.setNumberOfFLowsAccepted(0);
-			flow.setNumberOfFlowsBlocked(flow.getNumberOfFlowsGroomed());
-			cp.blockFlow(flow.getID());
-			return;
-		} else if (flow.isBatch()){
-			flow.setNumberOfFLowsAccepted(rate);
-			flow.setNumberOfFlowsBlocked(flow.getNumberOfFlowsGroomed()-rate);
-		}
-		// Create the links vector
-		long id = vt.createLightpath(shortestPath.getLinks(),
-				shortestPath.getFirstSlot(), shortestPath.getLastSlot());
-		if (id >= 0) {
-			// Single-hop routing (end-to-end lightpath)
-			lps[0] = vt.getLightpath(id);
-			flow.setFirstSlot(shortestPath.getFirstSlot());
-			flow.setLastSlot(shortestPath.getLastSlot());
-			flow.setLinks(shortestPath.getLinks());
-			cp.acceptFlow(flow.getID(), lps);
-			for (int i = 0; i < shortestPath.getLinks().length; i++) {
-				FlexGridLink curentLink = pt.getLink(shortestPath.getLink(i));
-				this.spectrumGraph.markEdgesRemoved(curentLink.getSource(),
-								curentLink.getDestination(),
-								shortestPath.getFirstSlot(),
-								shortestPath.getLastSlot());
-			}
-			return;
-		}
-		// Block the call
-		flow.setNumberOfFLowsAccepted(0);
-		flow.setNumberOfFlowsBlocked(flow.getNumberOfFlowsGroomed());
-		cp.blockFlow(flow.getID());
+		Batch updatedBatch = this.batches.addFLow(flow);
+		this.updateDeadlineEvent(updatedBatch);
 	}
 
 	@Override
 	public void flowDeparture(Flow flow) {
+//		System.out.println("ID com erro:" + flow.getID());
 		if (flow.getLinks() == null)
 			return;
 		for (int i = 0; i < flow.getLinks().length; i++) {
@@ -111,6 +65,114 @@ public class SpectrumGraphRSA implements RSA {
 		}
 	}
 
+	@Override
+	public void deadlineArrival(Batch batch, double time) {
+		LightPath shortestPath = null;
+		Batch toReschedule = new Batch(batch.getSource(), batch.getDestination()); //batch with the flows to be re-scheduled
+		Batch toBlock = new Batch(batch.getSource(), batch.getDestination());
+		while (shortestPath == null && batch.getRate() > 0){
+			int demandInSlots = (int) Math.ceil(batch.getRate()/ (double) pt.getSlotCapacity());
+			shortestPath = getShortestPath(this.spectrumGraph, batch.getSource(), batch.getDestination(), demandInSlots);
+			if (shortestPath == null){
+				Flow minDeadline = batch.mininumDeadlineFlow();
+				batch.remove(minDeadline);
+				if (minDeadline.getDeadline() > time){
+					toReschedule.add(minDeadline);
+				} else {
+					toBlock.add(minDeadline);
+				}
+					
+			}
+		}
+		if (shortestPath==null){ //no path found
+			for (Flow flow:toBlock){
+				cp.blockFlow(flow.getID());
+			}
+			this.batches.remove(batch);
+			Batch updatedBatch = null;
+			for (Flow flow:toReschedule){
+				updatedBatch = this.batches.addFLow(flow);
+				this.updateDeadlineEvent(updatedBatch);
+			}
+			return;
+		} else {  // found a path
+			LightPath[] lps = new LightPath[1];
+			long id = vt.createLightpath(shortestPath.getLinks(),
+					shortestPath.getFirstSlot(), shortestPath.getLastSlot());
+			if (id >= 0) {
+				// Single-hop routing (end-to-end lightpath)
+				lps[0] = vt.getLightpath(id);
+				Flow groomedFLow = batch.convertBatchToSingleFlow(time);
+				this.addNewFlowToCp(groomedFLow);
+//				int currentSlot = shortestPath.getFirstSlot();
+//				for (Flow flow:batch){
+//					if (currentSlot > shortestPath.getLastSlot()){
+//						toReschedule.add(flow);
+//						continue;
+//					}
+//					int demandInSlots = (int) Math.ceil(flow.getRate()/ (double) pt.getSlotCapacity());
+//					flow.setFirstSlot(currentSlot);
+//					currentSlot += demandInSlots;
+//					flow.setLastSlot(currentSlot-1);
+//					flow.setLinks(shortestPath.getLinks());
+//					cp.acceptFlow(flow.getID(), lps);
+//				}
+				lps[0] = vt.getLightpath(id);
+				groomedFLow.setFirstSlot(shortestPath.getFirstSlot());
+				groomedFLow.setLastSlot(shortestPath.getLastSlot());
+				groomedFLow.setLinks(shortestPath.getLinks());
+				cp.acceptFlow(groomedFLow.getID(), lps);
+				for (int i = 0; i < shortestPath.getLinks().length; i++) {
+					FlexGridLink curentLink = pt.getLink(shortestPath.getLink(i));
+					this.spectrumGraph
+							.markEdgesRemoved(curentLink.getSource(),
+									curentLink.getDestination(),
+									shortestPath.getFirstSlot(),
+									shortestPath.getLastSlot());
+				}
+				this.batches.remove(batch);
+				for (Flow flow:toBlock){
+					cp.blockFlow(flow.getID());
+				}
+				Batch updatedBatch = null;
+				for (Flow flow:toReschedule){
+					updatedBatch = this.batches.addFLow(flow);
+					this.updateDeadlineEvent(updatedBatch);
+				}
+				return;
+			} 
+		}
+		
+	}
+
+	/**
+	 * Update deadline event.
+	 *
+	 * @param batch the batch
+	 */
+	public void updateDeadlineEvent(Batch batch) {
+		 ((ControlPlane)this.cp).updateDeadlineEvent(batch);
+	}
+	
+	/**
+	 * Adds the new flow to cp.
+	 *
+	 * @param flow the flow
+	 */
+	public void addNewFlowToCp(Flow flow){
+		((ControlPlane)this.cp).addFlowArrivalEvent(new FlowArrivalEvent(flow.getTime(), flow));
+		((ControlPlane)this.cp).addFlowDepartureEvent(new FlowDepartureEvent(flow.getTime()+flow.getDuration(), flow.getID(), flow));
+	}
+	
+	/**
+	 * Update flow departure.
+	 *
+	 * @param flow the flow
+	 * @param newEvent the new event
+	 */
+	public void updateFlowDeparture(Flow flow, FlowDepartureEvent newEvent){
+		((ControlPlane)this.cp).updateDepartureEvent(flow, newEvent);
+	}
 	/**
 	 * Retrieves the shortest path between a source and a destination node,
 	 * within a weighted graph.

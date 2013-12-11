@@ -378,4 +378,14 @@ public class ControlPlane implements ControlPlaneForRSA {
     public void addFlowDepartureEvent(FlowDepartureEvent event){
     	eventScheduler.addFlowDeparture(event);
     }
+    
+    /**
+     * Update departure event.
+     *
+     * @param flow the flow
+     * @param event the event
+     */
+    public void updateDepartureEvent(Flow flow, FlowDepartureEvent event){
+    	eventScheduler.updateFlowDepartureEvent(flow, event);
+    }
 }

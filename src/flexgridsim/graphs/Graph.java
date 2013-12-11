@@ -51,7 +51,7 @@ public class Graph {
 		} catch (IOException e) {
 			System.out.println("Error writing the graph file");
 		} catch (IndexOutOfBoundsException e){
-			System.out.println("No dots to write");
+			System.out.println("No dots to write on graph "+ name +".");
 		}
 	}
 	

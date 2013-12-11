@@ -15,6 +15,7 @@ public class Batch extends ArrayList<Flow>{
 	private DeadlineEvent oldShortestDeadlineEvent;
 	private int src;
 	private int dst;
+	private int rate;
 	static long flowId = 0;
 	static int IDCounter = 0;
 	int ID;
@@ -26,11 +27,12 @@ public class Batch extends ArrayList<Flow>{
 	 * @param dst the dst
 	 */
 	public Batch(int src, int dst){
-		shortestDeadlineEvent = new DeadlineEvent(Double.MAX_VALUE, this);
-		oldShortestDeadlineEvent = new DeadlineEvent(Double.MAX_VALUE, this);
+		this.shortestDeadlineEvent = new DeadlineEvent(Double.MAX_VALUE, this);
+		this.oldShortestDeadlineEvent = new DeadlineEvent(Double.MAX_VALUE, this);
 		this.src = src;
 		this.dst = dst;
-		ID = IDCounter;
+		this.rate = 0;
+		this.ID = IDCounter;
 		IDCounter++;
 	}
 	
@@ -49,6 +51,7 @@ public class Batch extends ArrayList<Flow>{
 	@Override
 	public boolean add(Flow flow){
 		super.add(flow);
+		this.rate += flow.getRate();
 		if (flow.getDeadline() < this.shortestDeadlineEvent.getTime()){
 			this.oldShortestDeadlineEvent = shortestDeadlineEvent;
 			this.shortestDeadlineEvent = new DeadlineEvent(flow.getDeadline(), this);
@@ -56,6 +59,12 @@ public class Batch extends ArrayList<Flow>{
 		return true;
 	}
 
+	@Override
+	public boolean remove(Object o){
+		super.remove((Flow)o);
+		rate -= ((Flow)o).getRate();
+		return true;
+	}
 	/**
 	 * Gets the old shortest deadline event.
 	 *
@@ -135,6 +144,34 @@ public class Batch extends ArrayList<Flow>{
 		flow.setSizes(sizes);
 		flow.setNumberOfFlowsGroomed(this.size());
 		return flow;
+	}
+
+	/**
+	 * Gets the rate.
+	 *
+	 * @return the rate
+	 */
+	public int getRate() {
+		return rate;
+	}
+	
+	/**
+	 * Mininum deadline flow.
+	 *
+	 * @return the flow
+	 */
+	public Flow mininumDeadlineFlow(){
+		if (this.size() == 0){
+			return null;
+		} else {
+			Flow min = this.get(0);
+			for (Flow f:this){
+				if (min.getDeadline() < f.getDeadline()){
+					min = f;
+				}
+			}
+			return min;
+		}
 	}
 	
 }

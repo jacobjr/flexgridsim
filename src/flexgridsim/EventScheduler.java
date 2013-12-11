@@ -138,5 +138,26 @@ public class EventScheduler {
 	 */
 	public void addFlowDeparture(FlowDepartureEvent event) {
 		this.eventQueue.add(event);
-	} 
+	}
+	
+	/**
+	 * Update flow departure event.
+	 *
+	 * @param flow the flow
+	 * @param event the event
+	 */
+	public void updateFlowDepartureEvent(Flow flow, FlowDepartureEvent event){
+		Event eq = null;
+		for (Event e : eventQueue) {
+			if (e instanceof FlowDepartureEvent){
+				if (((FlowDepartureEvent) e).getFlow().getID() == flow.getID()){
+					eq = e;
+					break;
+				}
+			}
+		}
+		if (eq != null)
+			eventQueue.remove(eq);
+		this.addEvent(event);
+	}
 }
